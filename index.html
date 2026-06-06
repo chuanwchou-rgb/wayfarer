@@ -308,11 +308,14 @@ If describing an image, identify landmarks, signs, buildings, food, anything int
       body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: sys, messages })
     });
     const data = await res.json();
+    if (data.error) {
+      showChat(`API Error: ${data.error.type} — ${data.error.message}`); setStatus('ERROR'); return;
+    }
     const reply = data.content?.[0]?.text || "Couldn't get a response. Please try again.";
     conversationHistory.push({role:"user",content:userMsg},{role:"assistant",content:reply});
     showChat(reply); speak(reply); setStatus('READY', 'active');
   } catch(e) {
-    showChat("Trouble connecting — check your network or API key."); setStatus('ERROR');
+    showChat(`Connection error: ${e.message}`); setStatus('ERROR');
   }
 }
 
